@@ -1,7 +1,9 @@
 Credits (Alphabetically listed):
 ================================
+--Eric Lenio <lenio@lenio.net>:  for suggesting and providing a working
+  implementation of the key navigation feature in the ListBox.
 --Rodrigo Bernardo Pimentel <rbp@isnomore.net>:  improvements to the scankey 
-  function
+  function.
 --Anthony Rumble <anthony@linuxhelp.com.au>:  for a continuous stream of ideas 
   for improvements, catching what I missed, and prototyping new widgets. . .
 --Michael E. Schechter <mschechter@earthlink.net>:  contributed code for 

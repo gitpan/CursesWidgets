@@ -2,7 +2,7 @@
 #
 # (c) 2001, Arthur Corliss <corliss@digitalmages.com>
 #
-# $Id: TextMemo.pm,v 1.103 2002/11/04 00:37:28 corliss Exp corliss $
+# $Id: TextMemo.pm,v 1.104 2002/11/14 01:27:31 corliss Exp corliss $
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ Curses::Widgets::TextMemo - Text Memo Widgets
 
 =head1 MODULE VERSION
 
-$Id: TextMemo.pm,v 1.103 2002/11/04 00:37:28 corliss Exp corliss $
+$Id: TextMemo.pm,v 1.104 2002/11/14 01:27:31 corliss Exp corliss $
 
 =head1 SYNOPSIS
 
@@ -89,7 +89,7 @@ use Carp;
 use Curses;
 use Curses::Widgets;
 
-($VERSION) = (q$Revision: 1.103 $ =~ /(\d+(?:\.(\d+))+)/);
+($VERSION) = (q$Revision: 1.104 $ =~ /(\d+(?:\.(\d+))+)/);
 @ISA = qw(Curses::Widgets);
 
 #####################################################################
@@ -204,7 +204,7 @@ sub _border {
   my $conf = $self->{CONF};
   my ($border, $ts, $pos, $value, $lines) = 
     @$conf{qw(BORDER TEXTSTART CURSORPOS VALUE LINES)};
-  my (@lines, $v, $i);
+  my (@lines, $v, $i, $y, $x);
 
   # Massage the value as needed, and split the result
   $value = '' unless defined $value;
@@ -250,8 +250,9 @@ sub _border {
     $self->SUPER::_border($dwh);
 
     # Place the arrows
-    $dwh->addch(0, $$conf{COLUMNS}, ACS_UARROW) if $ts > 0;
-    $dwh->addch($lines + 1, $$conf{COLUMNS}, ACS_DARROW)
+    $dwh->getmaxyx($y, $x);
+    $dwh->addch(0, $x - 2, ACS_UARROW) if $ts > 0;
+    $dwh->addch($y - 1, $x - 2, ACS_DARROW)
       if $#lines - $ts > $lines;
   }
 }

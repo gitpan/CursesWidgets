@@ -4,6 +4,7 @@ Widgets/Calendar.pm
 Widgets/ComboBox.pm
 Widgets/Label.pm
 Widgets/ListBox.pm
+Widgets/ListBox/MultiColumn.pm
 Widgets/Menu.pm
 Widgets/ProgressBar.pm
 Widgets/TextField.pm

@@ -14,8 +14,8 @@ is entirely OO-based, hence any older scripts relying on the old versions will
 need to be rewritten.
 
 Also note that certain "widgets" are no longer available (i.e., the dialogs).
-Those are more properly forms, not widgets, and hence will be available in the
-upcoming Curses::Forms update.
+Those are more properly forms, not widgets, and hence are available in the
+latest Curses::Forms release.
 
 Requirements:
 -------------

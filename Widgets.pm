@@ -3,7 +3,7 @@
 #
 # (c) 2001, Arthur Corliss <corliss@digitalmages.com>
 #
-# $Id: Widgets.pm,v 1.996 2002/11/03 23:25:01 corliss Exp corliss $
+# $Id: Widgets.pm,v 1.997 2002/11/14 01:30:19 corliss Exp corliss $
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ framework
 
 =head1 MODULE VERSION
 
-$Id: Widgets.pm,v 1.996 2002/11/03 23:25:01 corliss Exp corliss $
+$Id: Widgets.pm,v 1.997 2002/11/14 01:30:19 corliss Exp corliss $
 
 =head1 SYNOPSIS
 
@@ -102,6 +102,8 @@ following widgets are currently available:
 
 =item List Box (Curses::Widgets::ListBox)
 
+=item Multicolumn List Box (Curses::Widgets::ListBox::MultiColumn)
+
 =item Menu (Curses::Widgets::Menu)
 
 =item Progress Bar (Curses::Widgets::ProgressBar)
@@ -143,7 +145,7 @@ use Carp;
 use Curses;
 use Exporter;
 
-($VERSION) = (q$Revision: 1.996 $ =~ /(\d+(?:\.(\d+))+)/);
+($VERSION) = (q$Revision: 1.997 $ =~ /(\d+(?:\.(\d+))+)/);
 @ISA = qw(Exporter);
 @EXPORT = qw(select_colour select_color scankey textwrap);
 
@@ -842,16 +844,30 @@ sub _init {
 
 This method saves the current attributes and colour pair in the passed window.
 This method would typically be called by the draw routine after _init is
-called on the derived window.
+called on the derived window (though the current _init method calls this for
+you).
 
 =cut
 
 sub _save {
   my $self = shift;
   my $dwh = shift;
+  my $conf = shift;
   my ($attr, $cp);
 
-  $dwh->attr_get($attr, $cp, 0);
+  # WARNING! Compatibility hack for some system curses implementation
+  # coming. . .
+
+  # I'd really like to do this. . .
+  if ($dwh->can('attr_get')) {
+    $dwh->attr_get($attr, $cp, 0);
+
+  # but if I can't, I'll just hope the window defaults are right
+  } else {
+    $cp = select_colour(@$conf{qw(FOREGROUND BACKGROUND)});
+    $attr = $$conf{FOREGROUND} eq 'yellow' ? A_BOLD : 0;
+  }
+
   $self->{ATTR} = [$attr, $cp];
 }
 
@@ -869,7 +885,18 @@ sub _restore {
   my $self = shift;
   my $dwh = shift;
 
-  $dwh->attr_set(@{$self->{ATTR}}, 0);
+  # WARNING! Compatibility hack for some system curses implementation
+  # coming. . .
+
+  # I'd really like to do this, too. . .
+  if ($dwh->can('attr_set')) {
+    $dwh->attr_set(@{$self->{ATTR}}, 0);
+
+  # but if you're going to be that way, I'll do it the longer way
+  } else {
+    $dwh->attrset(COLOR_PAIR($self->{ATTR}->[1]));
+    $dwh->attron($self->{ATTR}->[0]);
+  }
 }
 
 =head2 _border

@@ -1,4 +1,22 @@
 ----------------------------
+revision 1.997  locked by: corliss;
+date: 2002/11/14 01:30:19;  author: corliss;  state: Exp;  lines: +34 -7
+--POD fixes
+--Compatibility fix for curses without attr_get/attr_set functions
+--Introduction of the multi-column list box
+ListBox:
+--Fixed VALUE initialisation bug when when in multi-select mode
+--Fixed cursor position bug for large jumps down the last (past the
+  viewable window)
+--Changed arrow placement to go by window bounds to make inherited
+  behaviour more predictable
+--Added printable character navigation (thanks to Eric Lenio)
+Menu:
+--Checking for defined code reference before attempting to execute
+TextMemo:
+--Changed arrow placement to go by window bounds to make inherited
+  behaviour more predictable
+----------------------------
 revision 1.996  locked by: corliss;
 date: 2002/11/03 23:25:01;  author: corliss;  state: Exp;  lines: +450 -75
 --Added test_colour function

@@ -2,7 +2,7 @@
 #
 # Simple script that demonstrates the uses of Curses::Widgetss
 #
-# $Id: test.pl,v 1.103 2002/11/04 00:50:43 corliss Exp corliss $
+# $Id: test.pl,v 1.104 2002/11/14 01:36:48 corliss Exp corliss $
 #
 
 use strict;
@@ -41,7 +41,9 @@ $mwh = new Curses;
 noecho();
 halfdelay(5);
 $mwh->keypad(1);
+$mwh->syncok(1);
 curs_set(0);
+leaveok(1);
 
 # Draw the main window, and wait for a key press (the scankey
 # function is imported from the Curses::Widgets module)
@@ -285,7 +287,8 @@ sub main_win {
   $mwh->attrset(0);
 
   $mwh->standout();
-  $mwh->addstr(0, 1, "Welcome to the Curses::Widgets Demo!");
+  $mwh->addstr(0, 1, "Welcome to the Curses::Widgets " .
+    "v${Curses::Widgets::VERSION} Demo!");
   $mwh->standend();
 }
 

@@ -2,7 +2,7 @@
 #
 # (c) 2001, Arthur Corliss <corliss@digitalmages.com>
 #
-# $Id: Menu.pm,v 1.102 2002/11/04 00:38:30 corliss Exp corliss $
+# $Id: Menu.pm,v 1.103 2002/11/14 01:26:34 corliss Exp corliss $
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ Curses::Widgets::Menu - Menu Widgets
 
 =head1 MODULE VERSION
 
-$Id: Menu.pm,v 1.102 2002/11/04 00:38:30 corliss Exp corliss $
+$Id: Menu.pm,v 1.103 2002/11/14 01:26:34 corliss Exp corliss $
 
 =head1 SYNOPSIS
 
@@ -90,7 +90,7 @@ use Curses;
 use Curses::Widgets;
 use Curses::Widgets::ListBox;
 
-($VERSION) = (q$Revision: 1.102 $ =~ /(\d+(?:\.(\d+))+)/);
+($VERSION) = (q$Revision: 1.103 $ =~ /(\d+(?:\.(\d+))+)/);
 @ISA = qw(Curses::Widgets);
 
 #####################################################################
@@ -180,6 +180,7 @@ sub _conf {
       LINES       => 3,
       COLUMNS     => 10,
       FOCUSSWITCH => "\n\e",
+      INPUTFUNC   => $conf{INPUTFUNC},
     }) unless $err;
 
   return $err == 0 ? 1 : 0;
@@ -380,7 +381,11 @@ sub input_key {
         no strict 'refs';
 
         $sub = $$menus{$item}{$rv};
-        &$sub();
+        if (defined $sub) {
+          &$sub();
+        } else {
+          carp ref($self), ":  undefined subroutine ($rv) call attempted";
+        }
       }
     }
 

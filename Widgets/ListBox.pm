@@ -2,7 +2,7 @@
 #
 # (c) 2001, Arthur Corliss <corliss@digitalmages.com>
 #
-# $Id: ListBox.pm,v 1.103 2002/11/03 23:37:00 corliss Exp corliss $
+# $Id: ListBox.pm,v 1.104 2002/11/14 01:20:28 corliss Exp corliss $
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ Curses::Widgets::ListBox - List Box Widgets
 
 =head1 MODULE VERSION
 
-$Id: ListBox.pm,v 1.103 2002/11/03 23:37:00 corliss Exp corliss $
+$Id: ListBox.pm,v 1.104 2002/11/14 01:20:28 corliss Exp corliss $
 
 =head1 SYNOPSIS
 
@@ -87,7 +87,7 @@ use Carp;
 use Curses;
 use Curses::Widgets;
 
-($VERSION) = (q$Revision: 1.103 $ =~ /(\d+(?:\.(\d+))+)/);
+($VERSION) = (q$Revision: 1.104 $ =~ /(\d+(?:\.(\d+))+)/);
 @ISA = qw(Curses::Widgets);
 
 #####################################################################
@@ -187,7 +187,7 @@ sub _conf {
   $err = 1 unless $self->SUPER::_conf(%conf);
 
   # Update VALUE depending on selection mode
-  $conf{VALUE} = [] if $conf{MULTISEL};
+  $conf{VALUE} = [] if $conf{MULTISEL} and not exists $conf{VALUE};
 
   return $err == 0 ? 1 : 0;
 }
@@ -209,18 +209,20 @@ sub _border {
   my $conf = $self->{CONF};
   my ($top, $pos, $lines, $cols, $items) = 
     @$conf{qw(TOPELEMENT CURSORPOS LINES COLUMNS LISTITEMS)};
+  my ($y, $x);
 
   # Render the box
   $self->SUPER::_border($dwh);
 
   # Adjust the cursor position if it's out of whack
   $pos = $#{$items} if $pos > $#{$items};
-  $top++ if $pos - $top > $lines - 1;
+  while ($pos - $top > $lines - 1) { $top++ };
   while ($top > $pos) { --$top };
 
   # Render up/down arrows as needed
-  $dwh->addch(0, $cols, ACS_UARROW) if $top > 0;
-  $dwh->addch($lines + 1, $cols, ACS_DARROW) if 
+  $dwh->getmaxyx($y, $x);
+  $dwh->addch(0, $x - 2, ACS_UARROW) if $top > 0;
+  $dwh->addch($y - 1, $x - 2, ACS_DARROW) if 
     $top + $lines < @$items ;
 
   # Restore the default settings
@@ -313,6 +315,7 @@ sub input_key {
   my @items = @{$$conf{LISTITEMS}};
   my $pos = $$conf{CURSORPOS};
   my $re = $$conf{TOGGLE};
+  my $np;
 
   # Process special keys
   if ($in eq KEY_UP) {
@@ -366,6 +369,8 @@ sub input_key {
       } else {
         $sel = $pos;
       }
+    } elsif ($in =~ /^[[:print:]]$/ && $pos < $#items) {
+      $pos = $self->match_key($in);
     } else {
       beep;
     }
@@ -373,6 +378,21 @@ sub input_key {
 
   # Save the changes
   @$conf{qw(VALUE CURSORPOS)} = ($sel, $pos);
+}
+
+sub match_key {
+  my $self = shift;
+  my $in = shift;
+  my $conf = $self->{CONF};
+  my @items = @{$$conf{LISTITEMS}};
+  my $pos = $$conf{CURSORPOS};
+  my $np;
+
+  $np = $pos + 1;
+  while ($np <= $#items && $items[$np] !~ /^\Q$in\E/i) { $np++ };
+  $pos = $np if $np <= $#items and $items[$np] =~ /^\Q$in\E/i;
+
+  return $pos;
 }
 
 1;
