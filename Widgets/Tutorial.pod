@@ -1,9 +1,8 @@
 # Curses::Widget::Tutorial.pod -- Widget Usage Tutorial
 #
-# (c) 2001, Arthur Corliss <corliss@digitalmages.com>,
-#		Gallant Technologies, Inc.
+# (c) 2001, Arthur Corliss <corliss@digitalmages.com>
 #
-# $Id: Tutorial.pod,v 1.0 2001/12/10 10:47:43 corliss Exp $
+# $Id: Tutorial.pod,v 1.2 2002/11/04 00:44:04 corliss Exp corliss $
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -27,7 +26,7 @@ Curses::Widget::Tutorial -- Widget Usage Tutorial
 
 =head1 POD VERSION
 
-$Id: Tutorial.pod,v 1.0 2001/12/10 10:47:43 corliss Exp $
+$Id: Tutorial.pod,v 1.2 2002/11/04 00:44:04 corliss Exp corliss $
 
 =head1 DESCRIPTION
 
@@ -96,9 +95,16 @@ Next, we instantiate the widget(s) we want to use.
 	$tf = Curses::Widgets::TextField->new({
 		X		=> 5,
 		Y		=> 5,
-		LENGTH		=> 10,
+		COLUMNS		=> 10,
 		CAPTION		=> 'Login'
 		});
+
+One thing you need to remember is that B<COLUMNS> (and B<LINES>, for those
+widgets that support it) always pertain to the I<content> area in the widget.
+If the widget supports a bordered mode, the actual dimensions will increase by
+two in both the Y and the X axis.  In other words, since TextFields have
+borders on by default, the actual number of columns and lines that will be
+used by the above widget is 10 and 3, respectively.
 
 To cause the widget to display itself, call the B<draw> method:
 

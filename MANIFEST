@@ -2,7 +2,9 @@ Widgets.pm
 Widgets/ButtonSet.pm
 Widgets/Calendar.pm
 Widgets/ComboBox.pm
+Widgets/Label.pm
 Widgets/ListBox.pm
+Widgets/Menu.pm
 Widgets/ProgressBar.pm
 Widgets/TextField.pm
 Widgets/TextMemo.pm
@@ -10,7 +12,6 @@ Widgets/Tutorial.pod
 Widgets/Tutorial/Creation.pod
 Makefile.PL
 test.pl
-testw.pl
 CHANGELOG
 README
 LICENSE

@@ -2,7 +2,7 @@
 #
 # (c) 2001, Arthur Corliss <corliss@digitalmages.com>
 #
-# $Id: TextMemo.pm,v 1.100 2001/12/10 10:54:35 corliss Exp $
+# $Id: TextMemo.pm,v 1.103 2002/11/04 00:37:28 corliss Exp corliss $
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -26,37 +26,37 @@ Curses::Widgets::TextMemo - Text Memo Widgets
 
 =head1 MODULE VERSION
 
-$Id: TextMemo.pm,v 1.100 2001/12/10 10:54:35 corliss Exp $
+$Id: TextMemo.pm,v 1.103 2002/11/04 00:37:28 corliss Exp corliss $
 
 =head1 SYNOPSIS
 
-	use Curses::Widgets::TextMemo;
+  use Curses::Widgets::TextMemo;
 
-	$tm = Curses::Widgets::TextMemo->new({
-		CAPTION			=> undef,
-		CAPTIONCOL		=> undef,
-		LENGTH			=> 10,
-		MAXLENGTH		=> undef,
-		LINES			=> 3,
-		MASK			=> undef,
-		VALUE			=> '',
-		INPUTFUNC		=> \&scankey,
-		FOREGROUND		=> undef,
-		BACKGROUND		=> 'black',
-		BORDER			=> 1,
-		BORDERCOL		=> 'red',
-		FOCUSSWITCH		=> "\t",
-		CURSORPOS		=> 0,
-		TEXTSTART		=> 0,
-		PASSWORD		=> 0,
-		X				=> 1,
-		Y				=> 1,
-		READONLY		=> 0,
-		});
+  $tm = Curses::Widgets::TextMemo->new({
+    CAPTION       => 'Memo',
+    CAPTIONCOL    => 'blue',
+    COLUMNS       => 10,
+    MAXLENGTH     => undef,
+    LINES         => 3,
+    MASK          => undef,
+    VALUE         => '',
+    INPUTFUNC     => \&scankey,
+    FOREGROUND    => 'white',
+    BACKGROUND    => 'black',
+    BORDER        => 1,
+    BORDERCOL     => 'red',
+    FOCUSSWITCH   => "\t",
+    CURSORPOS     => 0,
+    TEXTSTART     => 0,
+    PASSWORD      => 0,
+    X             => 1,
+    Y             => 1,
+    READONLY      => 0,
+    });
 
-	$tm->draw($mwh, 1);
+  $tm->draw($mwh, 1);
 
-	See the Curses::Widgets pod for other methods.
+  See the Curses::Widgets pod for other methods.
 
 =head1 REQUIREMENTS
 
@@ -89,8 +89,8 @@ use Carp;
 use Curses;
 use Curses::Widgets;
 
-($VERSION) = (q$Revision: 1.100 $ =~ /(\d+(?:\.(\d+))+)/);
-@ISA = qw( Curses::Widgets );
+($VERSION) = (q$Revision: 1.103 $ =~ /(\d+(?:\.(\d+))+)/);
+@ISA = qw(Curses::Widgets);
 
 #####################################################################
 #
@@ -102,55 +102,51 @@ use Curses::Widgets;
 
 =head2 new (inherited from Curses::Widgets)
 
-	$tm = Curses::Widgets::TextMemo->new({
-		CAPTION			=> undef,
-		CAPTIONCOL		=> undef,
-		LENGTH			=> 10,
-		MAXLENGTH		=> undef,
-		LINES			=> 3,
-		MASK			=> undef,
-		VALUE			=> '',
-		INPUTFUNC		=> \&scankey,
-		FOREGROUND		=> undef,
-		BACKGROUND		=> 'black',
-		BORDER			=> 1,
-		BORDERCOL		=> 'red',
-		FOCUSSWITCH		=> "\t",
-		CURSORPOS		=> 0,
-		TEXTSTART		=> 0,
-		PASSWORD		=> 0,
-		X			=> 1,
-		Y			=> 1,
-		READONLY		=> 0,
-		});
+  $tm = Curses::Widgets::TextMemo->new({
+    CAPTION       => 'Memo',
+    CAPTIONCOL    => 'blue',
+    COLUMNS       => 10,
+    MAXLENGTH     => undef,
+    LINES         => 3,
+    MASK          => undef,
+    VALUE         => '',
+    INPUTFUNC     => \&scankey,
+    FOREGROUND    => 'white',
+    BACKGROUND    => 'black',
+    BORDER        => 1,
+    BORDERCOL     => 'red',
+    FOCUSSWITCH   => "\t",
+    CURSORPOS     => 0,
+    TEXTSTART     => 0,
+    PASSWORD      => 0,
+    X             => 1,
+    Y             => 1,
+    READONLY      => 0,
+    });
 
 The new method instantiates a new TextMemo object.  The only mandatory
 key/value pairs in the configuration hash are B<X> and B<Y>.  All others
 have the following defaults:
 
-	Key		Default		Description
-	============================================================
-	CAPTION		undef		Caption superimposed on border
-	CAPTIONCOL	undef		Foreground colour for caption 
-					text
-	LENGTH		10		Number of columns displayed
-	MAXLENGTH	undef		Maximum string length allowed
-	LINES		3		Number of lines in the window
-	VALUE		''		Current field text
-	INPUTFUNC	\&scankey	Function to use to scan for 
-					keystrokes
-	FOREGROUND	undef		Default foreground colour
-	BACKGROUND	'black'		Default background colour
-	BORDER		1		Display a border around the field
-	BORDERCOL	undef		Foreground colour for border
-	FOCUSSWITCH	"\t"		Characters which signify end of 
-					input
-	CURSORPOS	0		Starting position of the cursor
-	TEXTSTART	0		Line number of string to start 
-					displaying
-	PASSWORD	0		Subsitutes '*' instead of 
-					characters
-	READONLY	0		Prevents alteration to content
+  Key           Default   Description
+  ============================================================
+  CAPTION         undef   Caption superimposed on border
+  CAPTIONCOL      undef   Foreground colour for caption text
+  COLUMNS            10   Number of columns displayed
+  MAXLENGTH       undef   Maximum string length allowed
+  LINES               3   Number of lines in the window
+  VALUE              ''   Current field text
+  INPUTFUNC   \&scankey   Function to use to scan for keystrokes
+  FOREGROUND      undef   Default foreground colour
+  BACKGROUND      undef   Default background colour
+  BORDER              1   Display a border around the field
+  BORDERCOL       undef   Foreground colour for border
+  FOCUSSWITCH      "\t"   Characters which signify end of input
+  CURSORPOS           0   Starting position of the cursor
+  TEXTSTART           0   Line number of string to start 
+                          displaying
+  PASSWORD            0   Subsitutes '*' instead of characters
+  READONLY            0   Prevents alteration to content
 
 The B<CAPTION> is only valid when the B<BORDER> is enabled.  If the border
 is disabled, the field will be underlined, provided the terminal supports it.
@@ -159,46 +155,41 @@ The B<MAXLENGTH> has no effect if left undefined.
 =cut
 
 sub _conf {
-	# Validates and initialises the new TextMemo object.
-	#
-	# Internal use only.
+  # Validates and initialises the new TextMemo object.
+  #
+  # Usage:  $self->_conf(%conf);
 
-	my $self = shift;
-	my %conf = ( 
-		CAPTION			=> undef,
-		CAPTIONCOL		=> undef,
-		LENGTH			=> 10,
-		MAXLENGTH		=> undef,
-		LINES			=> 3,
-		VALUE			=> '',
-		INPUTFUNC		=> \&scankey,
-		FOREGROUND		=> undef,
-		BACKGROUND		=> 'black',
-		BORDER			=> 1,
-		BORDERCOL		=> undef,
-		UNDERLINE		=> 1,
-		FOCUSSWITCH		=> "\t",
-		CURSORPOS		=> 0,
-		TEXTSTART		=> 0,
-		PASSWORD		=> 0,
-		READONLY		=> 0,
-		@_ 
-		);
-	my @required = qw( X Y );
-	my $err = 0;
+  my $self = shift;
+  my %conf = ( 
+    COLUMNS       => 10,
+    MAXLENGTH     => undef,
+    LINES         => 3,
+    VALUE         => '',
+    INPUTFUNC     => \&scankey,
+    BORDER        => 1,
+    UNDERLINE     => 1,
+    FOCUSSWITCH   => "\t",
+    CURSORPOS     => 0,
+    TEXTSTART     => 0,
+    PASSWORD      => 0,
+    READONLY      => 0,
+    @_ 
+    );
+  my @required = qw(X Y);
+  my $err = 0;
 
-	# Check for required arguments
-	foreach (@required) { $err = 1 unless exists $conf{$_} };
+  # Check for required arguments
+  foreach (@required) { $err = 1 unless exists $conf{$_} };
 
-	# Make sure no errors are returned by the parent method
-	$err = 1 unless $self->SUPER::_conf(%conf);
+  # Make sure no errors are returned by the parent method
+  $err = 1 unless $self->SUPER::_conf(%conf);
 
-	return ($err == 0) ? 1 : 0;
+  return $err == 0 ? 1 : 0;
 }
 
 =head2 draw
 
-	$tm->draw($mwh, 1);
+  $tm->draw($mwh, 1);
 
 The draw method renders the text memo in its current state.  This
 requires a valid handle to a curses window in which it will render
@@ -207,335 +198,287 @@ text cursor to be rendered as well.
 
 =cut
 
-sub draw {
-	my $self = shift;
-	my $mwh = shift;
-	my $cursor = shift;
-	my $conf = $self->{CONF};
-	my ($border, $ro, $ts, $pos, $value) = 
-		@$conf{qw(BORDER READONLY TEXTSTART CURSORPOS VALUE)};
-	my ($y, $x) = @$conf{qw(Y X)};
-	my $cols = $$conf{'LENGTH'};
-	my $lines = $$conf{'LINES'};
-	my ($dwh, $ch, @lines, $line, $tmp, $chx, $chy);
-	my ($maxline);
+sub _border {
+  my $self = shift;
+  my $dwh = shift;
+  my $conf = $self->{CONF};
+  my ($border, $ts, $pos, $value, $lines) = 
+    @$conf{qw(BORDER TEXTSTART CURSORPOS VALUE LINES)};
+  my (@lines, $v, $i);
 
-	# Create a handle to the derived window area
-	$dwh = $mwh->derwin($lines + (2 * $border), $cols + (2 * $border), $y, $x);
+  # Massage the value as needed, and split the result
+  $value = '' unless defined $value;
+  $value = substr($value, 0, $$conf{MAXLENGTH}) if
+    defined $$conf{MAXLENGTH};
+  @lines = textwrap($value, $$conf{COLUMNS} - 1);
 
-	# Set the default foreground/background colour pair
-	if ($$conf{'FOREGROUND'} && $$conf{'BACKGROUND'}) {
-		$dwh->bkgdset(COLOR_PAIR(
-			select_colour(@$conf{qw(FOREGROUND BACKGROUND)})));
-	}
+  # Adjust the cursor position and text start line if they're out of whack
+  $pos = $pos < 0 ? 0 : ($pos > length($value) ? $pos = length($value) :
+    $pos);
+  $ts = $#lines if $ts > $#lines;
+  $ts = 0 if $ts < 0;
+  if ($ts > 0 && $pos < length(join('', @lines[0..($ts - 1)]))) {
+    $v = length(join('', @lines[0..($ts - 1)]));
+    $i = $ts - 1;
+    until ($v <= $pos) {
+      $v -= length($lines[$i]);
+      --$i;
+    }
+    $ts = $i > 0 ? $i : 0;
+    ++$ts unless $pos < length($lines[0]);
+  } elsif ($ts + $lines - 1 < $#lines && 
+    $pos >= length(join('', @lines[0..($ts + $lines - 1)]))) {
+    $v = length(join('', @lines[0..($ts + $lines - 1)]));
+    $i = $ts + $lines;
+    until ($v >= $pos) {
+      $v += length($lines[$i]);
+      ++$i;
+    }
+    $ts = $i - $lines;
+    ++$ts if $pos == $v;
+  }
+  ++$ts if $pos == length($value) and $ts + $lines == @lines;
 
-	# Trim the value if it exceeds the maximum length
-	$value = substr($value, 0, $$conf{'MAXLENGTH'}) if
-		defined $$conf{'MAXLENGTH'};
+  # Save the adjust values
+  @$conf{qw(TEXTSTART CURSORPOS VALUE)} = ($ts, $pos, $value);
+  $self->{SPLIT} = [@lines];
 
-	# Break text into lines
-	@lines = textwrap($value, $$conf{'LENGTH'});
+  # Render the border
+  if ($border) {
 
-	# Erase the window
-	$dwh->erase;
+    # Call the parent method
+    $self->SUPER::_border($dwh);
 
-	# Turn on underlining (terminal-dependent) if no border is used
-	$dwh->attron(A_UNDERLINE) unless ($border || ! $$conf{'UNDERLINE'});
-
-	# Adjust the cursor position and text start line if they're out of whack
-	if ($pos < 0) {
-		$pos = 0 if $pos < 0;
-	} elsif ($pos > length($value)) {
-		$pos = length($value);
-	}
-	if ($ts > $#lines) {
-		$ts = $#lines;
-	} elsif ($ts < 0) {
-		$ts = 0;
-	}
-
-	# Adjust the text start position if the cursor position is out
-	# of bounds, and calculate the relative cursor x and y positions
-	$chy = $chx = $tmp = 0;
-	$maxline = $ts + $$conf{'LINES'} - 1;
-	$maxline = $maxline > $#lines ? $#lines : $maxline;
-	if (scalar @lines) {
-
-		$tmp = length(join('', @lines[0..($ts - 1)])) - 1;
-
-		# Cursor position has moved above the displayed lines
-		if ($pos <= $tmp) {
-			until ($pos > $tmp) {
-				--$ts;
-				$tmp = length(join('', @lines[0..($ts - 1)])) - 1;
-			}
-			$chy = 0;
-			$chx = $pos - $tmp - 1;
-
-		# Cursor position is either in or below the window
-		} else {
-
-			$tmp = length(join('', @lines[0..$maxline])) - 1;
-
-			# Cursor position is below the window
-			if ($pos > $tmp) {
-				until ($pos <= $tmp + 1) {
-					++$ts;
-					$maxline += ($maxline < $#lines) ? 1 : 0;
-					$tmp = length(join('', @lines[0..$maxline])) - 1;
-				}
-				$chy = $maxline - $ts;
-				$chx = $pos - ($tmp - length($lines[$maxline]) + 1);
-
-			# Cursor is inside the displayed window
-			} else {
-				$chy = $maxline;
-				until ($pos > $tmp) {
-					$tmp -= length($lines[$chy]);
-					--$chy;
-				}
-				$chy -= ($ts - 1);
-				$chx = $pos - $tmp - 1;
-			}
-		}
-
-		# Bump the cursor to the next line for newline characters or
-		# if the cursor position exceeds the line length
-		if ($chx == $$conf{'LENGTH'}) {
-			++$chy;
-			$chx = 0;
-		}
-
-		# Move the entire displayed window down one line if chy exceeds it 
-		if ($chy == $$conf{'LINES'}) {
-			++$ts;
-			--$chy;
-		}
-
-	} else {
-		$ts = 0;
-	}
-
-	# Write the widget value
-	$tmp = 0;
-	foreach (1..$$conf{'LINES'}) {
-		if ($ts + $_ - 1 <= $#lines) {
-			chomp($lines[$ts + $_ - 1]);
-			$lines[$ts + $_ - 1] .= ' ' x ($$conf{'LENGTH'} - 
-				length($lines[$ts + $_ - 1]));
-			$dwh->addstr(0 + $border + $tmp, 0 + $border, 
-				$lines[$ts + $_ - 1]);
-		} else {
-			$dwh->addstr(0 + $border + $tmp, 0 + $border, 
-				' ' x $$conf{'LENGTH'});
-		}
-		++$tmp;
-	}
-
-	# Render the border
-	if ($border) {
-		if (defined $$conf{'BORDERCOL'}) {
-			$dwh->attrset(COLOR_PAIR(
-				select_colour(@$conf{qw(BORDERCOL BACKGROUND)})));
-			$dwh->attron(A_BOLD) if $$conf{'BORDERCOL'} eq 'yellow';
-		}
-		$dwh->box(ACS_VLINE, ACS_HLINE);
-
-		# Render the caption
-		if (defined $$conf{'CAPTION'}) {
-			$dwh->attrset(COLOR_PAIR(
-				select_colour(@$conf{qw(CAPTIONCOL BACKGROUND)})))
-				if $$conf{'CAPTIONCOL'};
-			$dwh->attron(A_BOLD) if $$conf{'CAPTIONCOL'} eq 'yellow';
-			$dwh->addstr(0, 1, substr($$conf{'CAPTION'}, 0, 
-				$$conf{'LENGTH'}));
-		}
-
-		# Render up/down arrows as needed
-		$dwh->addch(0, $cols, ACS_UARROW) if $ts > 0;
-		$dwh->addch($lines + 1, $cols, ACS_DARROW) if 
-			$ts + $lines < scalar @lines ;
-	}
-
-	# Draw the cursor if necessary
-	if ($cursor && ! $ro) {
-		if (length($value) > 0) {
-			if ($pos < length($value)) {
-				$ch = substr($value, $pos, 1);
-				$ch = ' ' if $ch eq "\n";
-			} else {
-				$ch = ' ';
-			}
-		} else {
-			$ch = ' ';
-		}
-		$dwh->standout;
-		$dwh->addstr(0 + $border + $chy, 
-			0 + $chx + $border, $ch);
-		$dwh->standend;
-	}
-
-	# Store textstart, cursorpos, and value in case it had to be adjusted
-	@$conf{qw(TEXTSTART CURSORPOS VALUE)} = ($ts, $pos, $value);
-
-	# Flush all of the changes to the console
-	$mwh->touchwin;
-	$mwh->refresh;
-	$dwh->delwin;
+    # Place the arrows
+    $dwh->addch(0, $$conf{COLUMNS}, ACS_UARROW) if $ts > 0;
+    $dwh->addch($lines + 1, $$conf{COLUMNS}, ACS_DARROW)
+      if $#lines - $ts > $lines;
+  }
 }
 
-sub _input {
-	# Process input a keystroke at a time.
-	#
-	# Internal use only.
+sub _content {
+  my $self = shift;
+  my $dwh = shift;
+  my $conf = $self->{CONF};
+  my ($border, $ts, $pos, $lines, $cols) = 
+    @$conf{qw(BORDER TEXTSTART CURSORPOS LINES COLUMNS)};
+  my @lines = @{$self->{SPLIT}};
+  my ($i, $j);
 
-	my $self = shift;
-	my $in = shift;
-	my $conf = $self->{CONF};
-	my ($value, $pos, $max, $ro, $ts) = 
-		@$conf{qw(VALUE CURSORPOS MAXLENGTH READONLY TEXTSTART)};
-	my @string = split(//, $value);
-	my @lines = textwrap($value, $$conf{'LENGTH'});
-	my ($snippet, $i, $lpos, $l);
+  # Print the lines
+  $j = 0;
+  for ($i = $ts; $i < $ts + $lines; $i++) {
+    unless ($i > $#lines) {
+      $$conf{PASSWORD} ? 
+        $dwh->addstr($j, 0, '*' x length($lines[$i])) :
+        $dwh->addstr($j, 0, $lines[$i]) ;
+    }
 
-	# Process special keys
-	if ($in eq KEY_BACKSPACE) {
-		return if $ro;
-		if ($pos > 0) {
-			splice(@string, $pos - 1, 1);
-			$value = join('', @string);
-			--$pos;
-		} else {
-			beep;
-		}
-	} elsif ($in eq KEY_RIGHT) {
-		$pos < length($value) ? ++$pos : beep;
-	} elsif ($in eq KEY_LEFT) {
-		$pos > 0 ? --$pos : beep;
-	} elsif ($in eq KEY_UP || $in eq KEY_DOWN ||
-		$in eq KEY_NPAGE || $in eq KEY_PPAGE) {
+    # Underline each line if there's no border
+    $dwh->chgat($j, 0, $cols, A_UNDERLINE, 
+      select_colour(@$conf{qw(FOREGROUND BACKGROUND)}), 0) unless $border;
 
-		# Get the text length up to the displayed window
-		$snippet = $ts == 0 ? 0 : length(join('', @lines[0..($ts - 1)]));
+    $j++;
+  }
+}
 
-		# Get the position of the cursor relative to the line it's on,
-		# as well as the line index
-		$i = 0;
-		while ($snippet + length($lines[$ts + $i]) < $pos) {
-			$snippet += length($lines[$ts + $i]);
-			++$i;
-		}
-		$l = $ts + $i;
-		$lpos = $pos - $snippet;
+sub _cursor {
+  my $self = shift;
+  my $dwh = shift;
+  my $conf = $self->{CONF};
+  my ($pos, $ts) = @$conf{qw(CURSORPOS TEXTSTART)};
+  my @lines = @{$self->{SPLIT}};
+  my $i = 0;
+  my $v = 0;
+  my $seg;
 
-		# Process according to the key
-		if ($in eq KEY_UP) {
-			if ($l > 0) {
-				if (length($lines[$l - 1]) > $lpos) {
-					$pos -= length($lines[$l - 1]);
-				} else {
-					$pos -= ($lpos + 1);
-				}
-			} else {
-				beep;
-			}
-		} elsif ($in eq KEY_DOWN) {
-			if ($l < $#lines) {
-				if (length($lines[$l + 1]) > $lpos) {
-					$pos += length($lines[$l]);
-				} else {
-					$pos += ((length($lines[$l]) - $lpos) + 
-						length($lines[$l + 1]) - 1);
-				}
-			} else {
-				beep;
-			}
-		} elsif ($in eq KEY_PPAGE) {
-			if ($l >= $$conf{'LINES'}) {
-				$pos -= length(join('', 
-					@lines[(1 + $l - $$conf{'LINES'})..($l - 1)]));
-				if (length($lines[$l - $$conf{'LINES'}]) > $lpos) {
-					$pos -= length($lines[$l - $$conf{'LINES'}]);
-				} else {
-					$pos -= ($lpos + 1);
-				}
-			} elsif ($l > 0) {
-				if ($lpos > length($lines[0])) {
-					$pos = length($lines[0]) - 1;
-				} else {
-					$pos = $lpos;
-				}
-			} else {
-				beep;
-			}
-		} elsif ($in eq KEY_NPAGE) {
-			if ($l <= $#lines - $$conf{'LINES'}) {
-				$pos += length(join('', 
-					@lines[($l + 1) ..($l + $$conf{'LINES'} - 1)]));
-				if (length($lines[$l + $$conf{'LINES'}]) >= $lpos) {
-					$pos += (length($lines[$l + $$conf{'LINES'}]) + 1);
-				} else {
-					$pos += ((length($lines[$l]) - $lpos) + 
-						length($lines[$l + $$conf{'LINES'}]) - 1);
-				}
-			} elsif ($l < $#lines) {
-				if (length($lines[$#lines]) > $lpos) {
-					$pos = length($value) - (length($lines[$#lines]) -
-						$lpos);
-				} else {
-					$pos = length($value);
-				}
-			} else {
-				beep;
-			}
-		}
+  $v = length(join('', @lines[0..($ts - 1)])) if $ts > 0;
+  while ($ts + $i < $#lines && $v + length($lines[$ts + $i]) <= $pos) {
+    $v += length($lines[$ts + $i]);
+    ++$i;
+  }
+  $v = $pos - $v;
+  #$i-- if $i > 0 and substr($$conf{VALUE}, $pos - 1, 1) eq "\n";
+  if ($pos == length($$conf{VALUE}) && substr($$conf{VALUE}, $pos - 1, 1) eq
+    "\n") {
+    ++$i;
+    $v = 0;
+  }
 
-	} elsif ($in eq KEY_HOME) {
-		$pos = 0;
-	} elsif ($in eq KEY_END) {
-		$pos = length($value);
+  $dwh->chgat($i, $v, 1, A_STANDOUT, 
+    select_colour(@$conf{qw(FOREGROUND BACKGROUND)}), 0);
 
-	# Process other keys
-	} else {
+  $self->_restore($dwh);
+}
 
-		return if $ro;
+sub input_key {
+  # Process input a keystroke at a time.
+  #
+  # Usage:  $self->input_key($key);
 
-		# Exit if it's a non-printing character
-		return unless $in =~ /^[\w\W]$/;
+  my $self = shift;
+  my $in = shift;
+  my $conf = $self->{CONF};
+  my ($value, $pos, $max, $ro, $ts) = 
+    @$conf{qw(VALUE CURSORPOS MAXLENGTH READONLY TEXTSTART)};
+  my @string = split(//, $value);
+  my @lines = @{$self->{SPLIT}};
+  my ($snippet, $i, $lpos, $l);
 
-		# Reject if we're already at the max length
-		if (defined $max && length($value) == $max) {
-			beep;
-			return;
+  # Process special keys
+  if ($in eq KEY_BACKSPACE) {
+    return if $ro;
+    if ($pos > 0) {
+      splice(@string, $pos - 1, 1);
+      $value = join('', @string);
+      --$pos;
+    } else {
+      beep;
+    }
+  } elsif ($in eq KEY_RIGHT) {
+    $pos < length($value) ? ++$pos : beep;
+  } elsif ($in eq KEY_LEFT) {
+    $pos > 0 ? --$pos : beep;
+  } elsif ($in eq KEY_UP || $in eq KEY_DOWN ||
+    $in eq KEY_NPAGE || $in eq KEY_PPAGE) {
 
-		# Append to the end if the cursor's at the end
-		} elsif ($pos == length($value)) {
-			$value .= $in;
+    # Exit early if there's no text
+    unless (length($value) > 0) {
+      beep;
+      return;
+    }
 
-		# Insert the character at the cursor's position
-		} elsif ($pos > 0) {
-			@string = (@string[0..($pos - 1)], $in, @string[$pos..$#string]);
-			$value = join('', @string);
+    # Get the text length up to the displayed window
+    $snippet = $ts == 0 ? 0 : length(join('', @lines[0..($ts - 1)]));
 
-		# Insert the character at the beginning of the string
-		} else {
-			$value = "$in$value";
-		}
+    # Get the position of the cursor relative to the line it's on,
+    # as well as the line index
+    if ($pos == length($value)) {
+      $l = $#lines;
+      $lpos = length($lines[$#lines]);
+    } else {
+      $i = 0;
+      while ($snippet + length($lines[$ts + $i]) <= $pos) {
+        $snippet += length($lines[$ts + $i]);
+        ++$i;
+      }
+      $l = $ts + $i;
+      $lpos = $pos - $snippet;
+    }
 
-		# Increment the cursor's position
-		++$pos;
-	}
+    # Process according to the key
+    if ($in eq KEY_UP) {
+      if ($l > 0) {
+        if (length($lines[$l - 1]) >= $lpos) {
+          $pos -= length($lines[$l - 1]);
+        } else {
+          $pos -= ($lpos + 1);
+        }
+      } else {
+        beep;
+      }
+    } elsif ($in eq KEY_DOWN) {
+      if ($l < $#lines) {
+        if (length($lines[$l + 1]) >= $lpos) {
+          $pos += length($lines[$l]);
+        } else {
+          $pos += ((length($lines[$l]) - $lpos) + 
+            length($lines[$l + 1]) - 1);
+        }
+      } else {
+        beep;
+      }
+    } elsif ($in eq KEY_PPAGE) {
+      if ($l >= $$conf{LINES}) {
+        $pos -= length(join('', 
+          @lines[(1 + $l - $$conf{LINES})..($l - 1)]));
+        if (length($lines[$l - $$conf{LINES}]) > $lpos) {
+          $pos -= length($lines[$l - $$conf{LINES}]);
+        } else {
+          $pos -= ($lpos + 1);
+        }
+      } elsif ($l > 0) {
+        if ($lpos > length($lines[0])) {
+          $pos = length($lines[0]) - 1;
+        } else {
+          $pos = $lpos;
+        }
+      } else {
+        beep;
+      }
+    } elsif ($in eq KEY_NPAGE) {
+      if ($l <= $#lines - $$conf{LINES}) {
+        $pos += length(join('', 
+          @lines[($l + 1) ..($l + $$conf{LINES} - 1)]));
+        if (length($lines[$l + $$conf{LINES}]) >= $lpos) {
+          $pos += (length($lines[$l + $$conf{LINES}]) + 1);
+        } else {
+          $pos += ((length($lines[$l]) - $lpos) + 
+            length($lines[$l + $$conf{LINES}]) - 1);
+        }
+      } elsif ($l < $#lines) {
+        if (length($lines[$#lines]) > $lpos) {
+          $pos = length($value) - (length($lines[$#lines]) -
+            $lpos);
+        } else {
+          $pos = length($value);
+        }
+      } else {
+        beep;
+      }
+    }
 
-	# Save the changes
-	@$conf{qw(VALUE CURSORPOS TEXTSTART)} = ($value, $pos, $ts);
+  } elsif ($in eq KEY_HOME) {
+    $pos = 0;
+  } elsif ($in eq KEY_END) {
+    $pos = length($value);
+
+  # Process other keys
+  } else {
+
+    return if $ro || $in !~ /^[[:print:]]$/;
+
+    # Exit if it's a non-printing character
+    return unless $in =~ /^[\w\W]$/;
+
+    # Reject if we're already at the max length
+    if (defined $max && length($value) == $max) {
+      beep;
+      return;
+
+    # Append to the end if the cursor's at the end
+    } elsif ($pos == length($value)) {
+      $value .= $in;
+
+    # Insert the character at the cursor's position
+    } elsif ($pos > 0) {
+      @string = (@string[0..($pos - 1)], $in, @string[$pos..$#string]);
+      $value = join('', @string);
+
+    # Insert the character at the beginning of the string
+    } else {
+      $value = "$in$value";
+    }
+
+    # Increment the cursor's position
+    ++$pos;
+  }
+
+  # Save the changes
+  @$conf{qw(VALUE CURSORPOS TEXTSTART)} = ($value, $pos, $ts);
 }
 
 1;
 
 =head1 HISTORY
 
-1999/12/29 -- Original text field widget in functional model
-2001/07/05 -- First incarnation in OO architecture
+=over
+
+=item 1999/12/29 -- Original text field widget in functional model
+
+=item 2001/07/05 -- First incarnation in OO architecture
+
+=back
 
 =head1 AUTHOR/COPYRIGHT
 
