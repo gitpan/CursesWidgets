@@ -2,7 +2,7 @@
 #
 # (c) 2001, Arthur Corliss <corliss@digitalmages.com>
 #
-# $Id: Calendar.pm,v 1.99 2001/12/05 09:54:06 corliss Exp $
+# $Id: Calendar.pm,v 1.100 2001/12/10 10:49:56 corliss Exp $
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -26,26 +26,26 @@ Curses::Widgets::Calendar - Calendar Widgets
 
 =head1 MODULE VERSION
 
-$Id: Calendar.pm,v 1.99 2001/12/05 09:54:06 corliss Exp $
+$Id: Calendar.pm,v 1.100 2001/12/10 10:49:56 corliss Exp $
 
 =head1 SYNOPSIS
 
 	use Curses::Widgets::Calendar;
 
 	$cal = Curses::Widgets::Calendar->({
-		LENGTH			=> 10,
-		VALUE			=> 0,
+		CAPTION			=> 'Appointments',
+		CAPTIONCOL		=> 'yellow',
 		INPUTFUNC		=> \&scankey,
 		FOREGROUND		=> undef,
 		BACKGROUND		=> 'black',
 		BORDER			=> 1,
-		BORDERCOL		=> undef,
-		FOCUSSWITCH		=> "\t\n",
-		HORIZONTAL		=> 1,
-		PADDING			=> 1,
+		BORDERCOL		=> 'red',
+		FOCUSSWITCH		=> "\t",
 		X			=> 1,
 		Y			=> 1,
-		LABELS			=> [ qw( OK CANCEL ) ],
+		HIGHLIGHT		=> [12, 17, 25],
+		HIGHLIGHTCOL		=> 'green',
+		MONTH			=> '11/2001',
 		});
 
 	$cal->draw($mwh, 1);
@@ -54,8 +54,13 @@ $Id: Calendar.pm,v 1.99 2001/12/05 09:54:06 corliss Exp $
 
 =head1 REQUIREMENTS
 
-Curses
-Curses::Widgets
+=over
+
+=item Curses
+
+=item Curses::Widgets
+
+=back
 
 =head1 DESCRIPTION
 
@@ -74,10 +79,11 @@ package Curses::Widgets::Calendar;
 
 use strict;
 use vars qw($VERSION @ISA);
+use Carp;
 use Curses;
 use Curses::Widgets;
 
-($VERSION) = (q$Revision: 1.99 $ =~ /(\d+(?:\.(\d+))+)/);
+($VERSION) = (q$Revision: 1.100 $ =~ /(\d+(?:\.(\d+))+)/);
 @ISA = qw( Curses::Widgets );
 
 #####################################################################

@@ -2,7 +2,7 @@
 #
 # Simple script that demonstrates the uses of Curses::Widgetss
 #
-# $Id: testw.pl,v 1.99 2001/12/05 09:57:51 corliss Exp $
+# $Id: testw.pl,v 1.100 2001/12/10 11:08:51 corliss Exp $
 #
 
 use strict;
@@ -14,6 +14,7 @@ use Curses::Widgets::ProgressBar;
 use Curses::Widgets::TextMemo;
 use Curses::Widgets::ListBox;
 use Curses::Widgets::Calendar;
+use Curses::Widgets::ComboBox;
 
 #####################################################################
 #
@@ -172,10 +173,24 @@ $widgets[6] = Curses::Widgets::Calendar->new({
 	HIGHLIGHT		=> [1, 5, 17, 26],
 	HIGHLIGHTCOL	=> 'green',
 	});
-
 $descriptions[6] = << '__EOF__';
 Curses::Widgets::Calendar -- This calendar supports date highlighting
 and broad navigation capabilities.
+
+Press <TAB> to move to the next widget (set).
+__EOF__
+
+$widgets[7] = Curses::Widgets::ComboBox->new({
+	Y				=> 2,
+	X				=> 62,
+	FOREGROUND		=> 'white',
+	BACKGROUND		=> 'red',
+	LISTITEMS		=> [qw(Mr. Mrs. Ms.)],
+	LENGTH			=> 4,
+	});
+$descriptions[7] = << '__EOF__';
+Curses::Widgets::ComboBox -- This is a text field that also has a 
+drop-down list to select values from.  Just press the down arrow.
 
 Press <TAB> to move to the next widget (set).
 __EOF__

@@ -2,7 +2,7 @@
 #
 # (c) 2001, Arthur Corliss <corliss@digitalmages.com>
 #
-# $Id: ProgressBar.pm,v 1.99 2001/12/05 09:54:29 corliss Exp $
+# $Id: ProgressBar.pm,v 1.100 2001/12/10 10:53:15 corliss Exp $
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ Curses::Widgets::ProgressBar - Progress Bar Widgets
 
 =head1 MODULE VERSION
 
-$Id: ProgressBar.pm,v 1.99 2001/12/05 09:54:29 corliss Exp $
+$Id: ProgressBar.pm,v 1.100 2001/12/10 10:53:15 corliss Exp $
 
 =head1 SYNOPSIS
 
@@ -56,8 +56,13 @@ $Id: ProgressBar.pm,v 1.99 2001/12/05 09:54:29 corliss Exp $
 
 =head1 REQUIREMENTS
 
-Curses
-Curses::Widgets
+=over
+
+=item Curses
+
+=item Curses::Widgets
+
+=back
 
 =head1 DESCRIPTION
 
@@ -81,10 +86,11 @@ package Curses::Widgets::ProgressBar;
 
 use strict;
 use vars qw($VERSION @ISA);
+use Carp;
 use Curses;
 use Curses::Widgets;
 
-($VERSION) = (q$Revision: 1.99 $ =~ /(\d+(?:\.(\d+))+)/);
+($VERSION) = (q$Revision: 1.100 $ =~ /(\d+(?:\.(\d+))+)/);
 @ISA = qw( Curses::Widgets );
 
 #####################################################################

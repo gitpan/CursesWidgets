@@ -1,0 +1,199 @@
+# Curses::Widget::Tutorial::Creation.pod -- Widget Creation Tutorial
+#
+# (c) 2001, Arthur Corliss <corliss@digitalmages.com>,
+#		Gallant Technologies, Inc.
+#
+# $Id: Tutorial.pod,v 1.99 2001/12/05 09:55:35 corliss Exp $
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+#####################################################################
+
+=head1 NAME
+
+Curses::Widget::Tutorial::Creation -- Widget Creation Tutorial
+
+=head1 POD VERSION
+
+$Id: Tutorial.pod,v 1.99 2001/12/05 09:55:35 corliss Exp $
+
+=head1 DESCRIPTION
+
+Creating a custom widget is as easy as creating a descendant class of
+B<Curses::Widget> and defining as few as three methods:
+
+	Method		Purpose
+	====================================================
+	_conf		Validates configurations options and 
+			initialises the internal state/data
+	draw		Renders the widget according to the
+			current state
+	_input		Updates the state information according
+			to the passed character input
+
+=head2 BASIC MODULE STRUCTURE
+
+A decent code template for custom widgets would start with the following
+(we'll call our new widget B<MyWidget>):
+
+	package MyWidget;
+	
+	use strict;
+	use vars qw($VERSION @ISA);
+	use Curses;
+	use Curses::Widget;
+	
+	($VERSION) = (q$Revision: 1.99 $ =~ /(\d+(?:\.(\d+))+)/);
+	@ISA = qw( Curses::Widget );
+
+Please note that the B<use Curses::Widget;> statment provides more than just a 
+base class to inherit methods from, it also imports standard functions for 
+use in the module:
+
+	Function	Purpose
+	==================================================
+	select_colour	Initialises new colour pairs, and returns
+			the appropriate colour pair number, for use
+			with $wh->attrset(COLOR_PAIR($n)) calls.
+			select_color, the American English spelling,
+			also works.
+	scankey		This blocks until a key is pressed, and that 
+			key returned.
+	textwrap	Splits the text given into lines no longer
+			than the column limit specified.
+
+
+See the B<Curses::Widget> pod for the specific syntax.
+
+=head2 METHOD SEMANTICS
+
+The _conf method is called by the class constructor (provided by
+B<Curses::Widget>, unless you override it here as well).  Widget objects
+should be created with all configuration options passed in a hash ref:
+
+	$widget = Curses::Widget::MyWidget->new({
+		OPTION1		=> $value1,
+		OPTION2		=> $value2,
+		[. . .]
+		});
+
+The configuration hash is dereferenced and passed as arguments to the _conf
+method inside of the B<new> constructor:
+
+	$rv = $self->_conf(%$conf);
+
+Because of this, the _conf method should probably begin along these lines:
+
+	sub _conf {
+		my $self = shift;
+		my %conf = (
+			OPTION1	=> default1,
+			OPTION2	=> default2,
+			[. . .],
+			@_
+			);
+		my $err = 0;
+
+		# Validate and initialise the widget's state
+		# and store in the %conf hash
+
+		# Always include the following
+		$err = 1 unless $self->SUPER::_conf(%conf);
+
+		return ($err == 0) ? 1 : 0;
+	}
+
+You should perform any initialisation and validation of the configuration
+options here.  This routine is expected to return a true or false value,
+depending on whether or not any critical errors were found.  A false value
+will prevent the B<new> constructor from returning an object reference,
+causing the instantiation request to fail.
+
+The last two lines of code should always be included in this subroutine.  The
+call to the parent class' _conf method stores the final initialised state
+information in %conf in the object field B<CONF>.  You can retrieve and update
+the state information via $self->{CONF}.  A copy of that state information
+will be stored in $self->{OCONF}, and can be restored with a call to B<reset>,
+a method provided by B<Curses::Widget>.
+
+The second method you should override is the draw method.  This method, as
+mentioned above, is responsible for rendering the widget according to its
+state information.  This method should handle two arguments:
+
+	$widget->draw($mwh, 1);
+
+The first argument is a reference to a valid Curses window object.  This
+method is expected to create a derived window inside of this window for
+rendering itself, and deleting that derived window before exiting the call.
+
+The second argument, which is optional, should be a true or false value, which
+indicates whether the widget should be rendered in an "active" mode.  For
+example, in the case of text-handling widgets, a cursor should be present to
+indicate the current point of insertion of any input.  Or, in the case of a
+button set, the currently selected button, should the user desire to "press"
+it.
+
+Summarised, the method code should resemble this:
+
+	sub draw {
+		my $self = shift;
+		my $mwh = shift;
+		my $active = shift;
+		my $conf = $self->{CONF};
+		my $dwh;
+
+		[. . .]
+
+		# Create the derived window
+		$dwh = $mwh->derwin($lines, $cols, $y, $x);
+
+		# Fill the window
+
+		# Flush all of the changes to the console
+		$mwh->touchwin;
+		$mwh->refresh;
+		$dwh->delwin;
+	}
+
+The final method that should be overridden is the _input method.  This expects
+a single argument, that being the keystroke captured by the keyboard scanning
+function.  It uses that value to update (if it's not rejected) the widget's
+state information.  A rough skeleton for this function would be as follows:
+
+	sub _input {
+		my $self = shift;
+		my $key = shift;
+		my $conf = $self->{CONF};
+
+		# validate/update state information
+	}
+
+=head2 CONCLUSION
+
+That, in a nutshell, is all there is to creating a custom widget.  For a
+working example which uses the structure noted above, look at the TextField or
+ButtonSet widgets.  Both consist of nothing more than the routines listed
+above.
+
+=head1 HISTORY
+
+2001/07/07 -- First draft.
+
+=head1 AUTHOR/COPYRIGHT
+
+(c) 2001 Arthur Corliss (corliss@digitalmages.com), 
+
+=cut
+

@@ -2,7 +2,7 @@
 #
 # (c) 2001, Arthur Corliss <corliss@digitalmages.com>
 #
-# $Id: ButtonSet.pm,v 1.99 2001/12/05 09:53:44 corliss Exp $
+# $Id: ButtonSet.pm,v 1.100 2001/12/10 10:49:13 corliss Exp $
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ Curses::Widgets::ButtonSet - Button Set Widgets
 
 =head1 MODULE VERSION
 
-$Id: ButtonSet.pm,v 1.99 2001/12/05 09:53:44 corliss Exp $
+$Id: ButtonSet.pm,v 1.100 2001/12/10 10:49:13 corliss Exp $
 
 =head1 SYNOPSIS
 
@@ -54,8 +54,13 @@ $Id: ButtonSet.pm,v 1.99 2001/12/05 09:53:44 corliss Exp $
 
 =head1 REQUIREMENTS
 
-Curses
-Curses::Widgets
+=over
+
+=item Curses
+
+=item Curses::Widgets
+
+=back
 
 =head1 DESCRIPTION
 
@@ -74,10 +79,11 @@ package Curses::Widgets::ButtonSet;
 
 use strict;
 use vars qw($VERSION @ISA);
+use Carp;
 use Curses;
 use Curses::Widgets;
 
-($VERSION) = (q$Revision: 1.99 $ =~ /(\d+(?:\.(\d+))+)/);
+($VERSION) = (q$Revision: 1.100 $ =~ /(\d+(?:\.(\d+))+)/);
 @ISA = qw( Curses::Widgets );
 
 #####################################################################

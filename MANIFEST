@@ -1,11 +1,13 @@
 Widgets.pm
 Widgets/ButtonSet.pm
-Widgets/ListBox.pm
-Widgets/TextMemo.pm
 Widgets/Calendar.pm
+Widgets/ComboBox.pm
+Widgets/ListBox.pm
 Widgets/ProgressBar.pm
 Widgets/TextField.pm
+Widgets/TextMemo.pm
 Widgets/Tutorial.pod
+Widgets/Tutorial/Creation.pod
 Makefile.PL
 test.pl
 testw.pl

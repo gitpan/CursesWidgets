@@ -1,6 +1,17 @@
 ----------------------------
+revision 1.100
+date: 2001/12/09 20:15:43
+
+--Updated modules to use Carp
+--Documentation updates
+--Added new ComboBox widget
+--Added new Usage Tutorial
+--Fixed multiple field request bug in base class getField method
+--Removed 'Printing Filler' warning from TextMemo
+--Fixed bug where cursor was attempted to be drawn with nothing in the list
+
+----------------------------
 revision 1.99
 date: 2001/12/05 02:09:55
 
 --Initial OO revision pre-release.
-

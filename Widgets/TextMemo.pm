@@ -2,7 +2,7 @@
 #
 # (c) 2001, Arthur Corliss <corliss@digitalmages.com>
 #
-# $Id: TextMemo.pm,v 1.99 2001/12/05 09:55:07 corliss Exp $
+# $Id: TextMemo.pm,v 1.100 2001/12/10 10:54:35 corliss Exp $
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ Curses::Widgets::TextMemo - Text Memo Widgets
 
 =head1 MODULE VERSION
 
-$Id: TextMemo.pm,v 1.99 2001/12/05 09:55:07 corliss Exp $
+$Id: TextMemo.pm,v 1.100 2001/12/10 10:54:35 corliss Exp $
 
 =head1 SYNOPSIS
 
@@ -60,8 +60,13 @@ $Id: TextMemo.pm,v 1.99 2001/12/05 09:55:07 corliss Exp $
 
 =head1 REQUIREMENTS
 
-Curses
-Curses::Widgets
+=over
+
+=item Curses
+
+=item Curses::Widgets
+
+=back
 
 =head1 DESCRIPTION
 
@@ -80,10 +85,11 @@ package Curses::Widgets::TextMemo;
 
 use strict;
 use vars qw($VERSION @ISA);
+use Carp;
 use Curses;
 use Curses::Widgets;
 
-($VERSION) = (q$Revision: 1.99 $ =~ /(\d+(?:\.(\d+))+)/);
+($VERSION) = (q$Revision: 1.100 $ =~ /(\d+(?:\.(\d+))+)/);
 @ISA = qw( Curses::Widgets );
 
 #####################################################################
@@ -320,7 +326,6 @@ sub draw {
 			$dwh->addstr(0 + $border + $tmp, 0 + $border, 
 				$lines[$ts + $_ - 1]);
 		} else {
-			warn "Printing filler\n";
 			$dwh->addstr(0 + $border + $tmp, 0 + $border, 
 				' ' x $$conf{'LENGTH'});
 		}

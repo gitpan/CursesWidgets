@@ -2,7 +2,7 @@
 #
 # (c) 2001, Arthur Corliss <corliss@digitalmages.com>
 #
-# $Id: ListBox.pm,v 1.99 2001/12/05 09:54:17 corliss Exp $
+# $Id: ListBox.pm,v 1.100 2001/12/10 10:52:17 corliss Exp $
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ Curses::Widgets::ListBox - List Box Widgets
 
 =head1 MODULE VERSION
 
-$Id: ListBox.pm,v 1.99 2001/12/05 09:54:17 corliss Exp $
+$Id: ListBox.pm,v 1.100 2001/12/10 10:52:17 corliss Exp $
 
 =head1 SYNOPSIS
 
@@ -56,8 +56,13 @@ $Id: ListBox.pm,v 1.99 2001/12/05 09:54:17 corliss Exp $
 
 =head1 REQUIREMENTS
 
-Curses
-Curses::Widgets
+=over
+
+=item Curses
+
+=item Curses::Widgets
+
+=back
 
 =head1 DESCRIPTION
 
@@ -77,10 +82,11 @@ package Curses::Widgets::ListBox;
 
 use strict;
 use vars qw($VERSION @ISA);
+use Carp;
 use Curses;
 use Curses::Widgets;
 
-($VERSION) = (q$Revision: 1.99 $ =~ /(\d+(?:\.(\d+))+)/);
+($VERSION) = (q$Revision: 1.100 $ =~ /(\d+(?:\.(\d+))+)/);
 @ISA = qw( Curses::Widgets );
 
 #####################################################################
@@ -282,7 +288,7 @@ sub draw {
 	}
 
 	# Draw the cursor if necessary
-	if ($cursor) {
+	if ($cursor && scalar @items) {
 		$tmp = substr($items[$cursorpos], 0, $cols);
 		$tmp .= ' ' x ($cols - length($tmp)) if length($tmp) < $cols;
 		$dwh->standout;

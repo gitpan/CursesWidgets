@@ -1,8 +1,8 @@
-# Curses::Widgets::TextField.pm -- Text Field Widgets
+# Curses::Widgets::ComboBox.pm -- Text Field Widgets
 #
 # (c) 2001, Arthur Corliss <corliss@digitalmages.com>
 #
-# $Id: TextField.pm,v 1.100 2001/12/10 10:54:03 corliss Exp $
+# $Id: ComboBox.pm,v 1.100 2001/12/10 10:51:05 corliss Exp $
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -22,17 +22,17 @@
 
 =head1 NAME
 
-Curses::Widgets::TextField - Text Field Widgets
+Curses::Widgets::ComboBox - Combo-Box Widgets
 
 =head1 MODULE VERSION
 
-$Id: TextField.pm,v 1.100 2001/12/10 10:54:03 corliss Exp $
+$Id: ComboBox.pm,v 1.100 2001/12/10 10:51:05 corliss Exp $
 
 =head1 SYNOPSIS
 
-	use Curses::Widgets::TextField;
+	use Curses::Widgets::ComboBox;
 
-	$tf = Curses::Widgets::TextField->new({
+	$cb = Curses::Widgets::ComboBox->new({
 		CAPTION			=> undef,
 		CAPTIONCOL		=> undef,
 		LENGTH			=> 10,
@@ -51,9 +51,10 @@ $Id: TextField.pm,v 1.100 2001/12/10 10:54:03 corliss Exp $
 		X			=> 1,
 		Y			=> 1,
 		READONLY		=> 0,
+		LISTITEMS		=> [qw(foo bar wop)],
 		});
 
-	$tf->draw($mwh, 1);
+	$cb->draw($mwh, 1);
 
 	See the Curses::Widgets pod for other methods.
 
@@ -65,12 +66,18 @@ $Id: TextField.pm,v 1.100 2001/12/10 10:54:03 corliss Exp $
 
 =item Curses::Widgets
 
+=item Curses::Widgets::TextField
+
+=item Curses::Widgets::ListBox
+
 =back
 
 =head1 DESCRIPTION
 
-Curses::Widgets::TextField provides simplified OO access to Curses-based
-single line text fields.  Each object maintains its own state information.
+Curses::Widgets::ComboBox provides simplified OO access to Curses-based
+combo-boxes.  This widget essentially acts as text field widget, but upon a
+KEY_DOWN or "\n", a drop-down list is displayed, and the item selected is put
+in the text field as the value.
 
 =cut
 
@@ -80,16 +87,18 @@ single line text fields.  Each object maintains its own state information.
 #
 #####################################################################
 
-package Curses::Widgets::TextField;
+package Curses::Widgets::ComboBox;
 
 use strict;
 use vars qw($VERSION @ISA);
 use Carp;
 use Curses;
 use Curses::Widgets;
+use Curses::Widgets::TextField;
+use Curses::Widgets::ListBox;
 
 ($VERSION) = (q$Revision: 1.100 $ =~ /(\d+(?:\.(\d+))+)/);
-@ISA = qw( Curses::Widgets );
+@ISA = qw( Curses::Widgets::TextField Curses::Widgets );
 
 #####################################################################
 #
@@ -101,7 +110,7 @@ use Curses::Widgets;
 
 =head2 new (inherited from Curses::Widgets)
 
-	$tf = Curses::Widgets::TextField->new({
+	$cb = Curses::Widgets::ComboBox->new({
 		CAPTION			=> undef,
 		CAPTIONCOL		=> undef,
 		LENGTH			=> 10,
@@ -120,9 +129,10 @@ use Curses::Widgets;
 		X			=> 1,
 		Y			=> 1,
 		READONLY		=> 0,
+		LISTITEMS		=> [qw(foo bar wop)],
 		});
 
-The new method instantiates a new TextField object.  The only mandatory
+The new method instantiates a new ComboBox object.  The only mandatory
 key/value pairs in the configuration hash are B<X> and B<Y>.  All others
 have the following defaults:
 
@@ -150,6 +160,12 @@ have the following defaults:
 	PASSWORD	0		Subsitutes '*' instead of 
 					characters
 	READONLY	0		Prevents alteration to content
+	LISTLINES	5		Number of lines to display at
+					a time in the drop-down list
+	LISTLENGTH	[LENGTH]	Width of the drop-down list.
+					Defaults to the same length
+					specified for the CombBox widget
+	LISTITEMS	[]		Items listed in drop-down list
 
 The B<CAPTION> is only valid when the B<BORDER> is enabled.  If the border
 is disabled, the field will be underlined, provided the terminal supports it.
@@ -159,45 +175,48 @@ If B<MAXLENGTH> is undefined, no limit will be placed on the string length.
 =cut
 
 sub _conf {
-	# Validates and initialises the new TextField object.
+	# Validates and initialises the new ComboBox object.
 	#
 	# Internal use only.
 
 	my $self = shift;
 	my %conf = ( 
-		CAPTION			=> undef,
-		CAPTIONCOL		=> undef,
-		LENGTH			=> 10,
-		MAXLENGTH		=> 255,
-		MASK			=> undef,
-		VALUE			=> '',
-		INPUTFUNC		=> \&scankey,
-		FOREGROUND		=> undef,
-		BACKGROUND		=> 'black',
-		BORDER			=> 1,
-		BORDERCOL		=> undef,
-		FOCUSSWITCH		=> "\t\n",
-		CURSORPOS		=> 0,
-		TEXTSTART		=> 0,
-		PASSWORD		=> 0,
-		READONLY		=> 0,
-		@_ 
+		LISTLINES		=> 5,
+		FOCUSSWITCH		=> "\t",
+		LISTITEMS		=> [],
+		@_
 		);
-	my @required = qw( X Y );
 	my $err = 0;
-
-	# Check for required arguments
-	foreach (@required) { $err = 1 unless exists $conf{$_} };
 
 	# Make sure no errors are returned by the parent method
 	$err = 1 unless $self->SUPER::_conf(%conf);
 
+	# Set the default list length to the field length if it
+	# hasn't been defined
+	$self->{'CONF'}->{'LISTLENGTH'} = $conf{'LENGTH'} unless 
+		exists $conf{'LISTLENGTH'};
+
+	# Create a list box object for the popup if no errors were encountered
+	$self->{'LISTBOX'} = Curses::Widgets::ListBox->new({
+			X			=> 0,
+			Y			=> 0,
+			LISTITEMS	=> $conf{'LISTITEMS'},
+			SELECTED	=> $conf{'SELECTED'},
+			INPUTFUNC	=> $conf{'INPUTFUNC'},
+			BORDERCOL	=> $conf{'BORDERCOL'},
+			FOREGROUND	=> $conf{'FOREGROUND'},
+			BACKGROUND	=> $conf{'BACKGROUND'},
+			LINES		=> $conf{'LISTLINES'},
+			LENGTH		=> $self->{'CONF'}->{'LISTLENGTH'},
+			FOCUSSWITCH	=> "\n\t",
+		}) unless $err;
+
 	return ($err == 0) ? 1 : 0;
 }
 
-=head2 draw
+=head2 draw (inherited from Curses::Widgets::TextField)
 
-	$tf->draw($mwh, 1);
+	$cb->draw($mwh, 1);
 
 The draw method renders the text field in its current state.  This
 requires a valid handle to a curses window in which it will render
@@ -211,14 +230,17 @@ sub draw {
 	my $mwh = shift;
 	my $cursor = shift;
 	my $conf = $self->{CONF};
-	my ($y, $x, $ro, $border, $pos, $ts, $value) = 
-		@$conf{qw(Y X READONLY BORDER CURSORPOS TEXTSTART VALUE)};
-	my $cols = $$conf{'LENGTH'} + (2 * $border);
+	my ($y, $x, $border) = @$conf{qw(Y X BORDER)};
+	my $cols = 1 + (2 * $border);
 	my $lines = 1 + (2 * $border);
-	my ($dwh, $ch, $seg);
+	my $dwh;
+
+	# Render the Text Field
+	$self->SUPER::draw($mwh, $cursor);
 
 	# Create a handle to the derived window area
-	$dwh = $mwh->derwin($lines, $cols, $y, $x);
+	$dwh = $mwh->derwin($lines, $cols, $y, $x + $$conf{'LENGTH'} +
+		$border);
 
 	# Set the default foreground/background colour pair
 	if ($$conf{'FOREGROUND'} && $$conf{'BACKGROUND'}) {
@@ -226,33 +248,11 @@ sub draw {
 			select_colour(@$conf{qw(FOREGROUND BACKGROUND)})));
 	}
 
-	# Trim the value if it exceeds the maximum length
-	$value = substr($value, 0, $$conf{'MAXLENGTH'});
-
 	# Erase the window
 	$dwh->erase;
 
-	# Turn on underlining (terminal-dependent) if no border is used
-	$dwh->attron(A_UNDERLINE) unless $border;
-
-	# Adjust the cursor position and text start if it's out of whack
-	if ($pos > length($value)) {
-		$pos = length($value);
-	} elsif ($pos < 0) {
-		$pos = 0;
-	}
-	if ($pos > $ts + $$conf{'LENGTH'} - 1) {
-		$ts = $pos + 1 - $$conf{'LENGTH'};
-	} elsif ($pos < $ts) {
-		$ts = $pos;
-	}
-	$ts = 0 if $ts < 0;
-
-	# Write the widget value (adjusting for horizontal scrolling)
-	$seg = substr($value, $ts, $$conf{'LENGTH'});
-	$seg = '*' x length($seg) if $$conf{'PASSWORD'};
-	$seg .= ' ' x ($$conf{'LENGTH'} - length($seg));
-	$dwh->addstr(0 + $border, 0 + $border, $seg);
+	# Print the down arrow
+	$dwh->addch(0 + $border, 0 + $border, ACS_DARROW);
 
 	# Render the border
 	if ($border) {
@@ -262,43 +262,50 @@ sub draw {
 			$dwh->attron(A_BOLD) if $$conf{'BORDERCOL'} eq 'yellow';
 		}
 		$dwh->box(ACS_VLINE, ACS_HLINE);
-
-		# Render the caption
-		if (defined $$conf{'CAPTION'}) {
-			$dwh->attrset(COLOR_PAIR(
-				select_colour(@$conf{qw(CAPTIONCOL BACKGROUND)})))
-				if $$conf{'CAPTIONCOL'};
-			$dwh->attron(A_BOLD) if $$conf{'CAPTIONCOL'} eq 'yellow';
-			$dwh->addstr(0, 1, substr($$conf{'CAPTION'}, 0, 
-				$$conf{'LENGTH'}));
-		}
+		$dwh->addch(0, 0, ACS_TTEE);
+		$dwh->addch(2, 0, ACS_BTEE);
 	}
-
-	# Draw the cursor if necessary
-	if ($cursor && ! $ro) {
-		if (length($value) > 0) {
-			if ($pos < length($value)) {
-				$ch = substr($value, $pos, 1);
-				$ch = '*' if $$conf{'PASSWORD'};
-			} else {
-				$ch = ' ';
-			}
-		} else {
-			$ch = ' ';
-			$pos = 0;
-		}
-		$dwh->standout;
-		$dwh->addstr(0 + $border, 0 + ($pos - $ts) + $border, $ch);
-		$dwh->standend;
-	}
-
-	# Save the textstart, cursorpos, and value in case it was tweaked
-	@$conf{qw(TEXTSTART CURSORPOS VALUE)} = ($ts, $pos, $value);
 
 	# Flush all of the changes to the console
 	$mwh->touchwin;
 	$mwh->refresh;
 	$dwh->delwin;
+}
+
+=head2 popup
+
+	$combo->popup;
+
+This method causes the drop down list to be displayed.  Since, theoretically,
+this list should never be seen unless it's being actively used, we will always
+assume that we need to draw a cursor on the list as well.
+
+=cut
+
+sub popup {
+	my $self = shift;
+	my $conf = $self->{'CONF'};
+	my ($x, $y, $border) = @$conf{qw(X Y BORDER)};
+	my $lb = $self->{'LISTBOX'};
+	my ($pwh, $items, $cp, $in);
+
+	# Calculate the border column/lines
+	$border *= 2;
+
+	# Create the popup window
+	$pwh = newwin($$conf{'LISTLINES'} + $border, $$conf{'LISTLENGTH'} +
+		$border, $y + $border, $x + $border);
+	$pwh->keypad(1);
+
+	# Render the list box
+	$lb->execute($pwh);
+
+	# Release the window
+	$pwh->delwin;
+
+	# Place the selected listbox value into the textfield
+	($cp, $items) = $lb->getField(qw(CURSORPOS LISTITEMS));
+	$$conf{'VALUE'} = $$items[$cp] if (defined $cp && scalar @$items);
 }
 
 sub _input {
@@ -309,71 +316,24 @@ sub _input {
 	my $self = shift;
 	my $in = shift;
 	my $conf = $self->{CONF};
-	my $mask = $$conf{'MASK'};
-	my ($value, $pos, $max, $ro) = 
-		@$conf{qw(VALUE CURSORPOS MAXLENGTH READONLY)};
-	my @string = split(//, $value);
 
-	# Process special keys
-	if ($in eq KEY_BACKSPACE) {
-		return if $ro;
-		if ($pos > 0) {
-			splice(@string, $pos - 1, 1);
-			$value = join('', @string);
-			--$pos;
-		} else {
-			beep;
-		}
-	} elsif ($in eq KEY_RIGHT) {
-		$pos < length($value) ? ++$pos : beep;
-	} elsif ($in eq KEY_LEFT) {
-		$pos > 0 ? --$pos : beep;
-	} elsif ($in eq KEY_HOME) {
-		$pos = 0;
-	} elsif ($in eq KEY_END) {
-		$pos = length($value);
+	# Handle only special keys that will pull down the list
+	if ($in eq "\n") {
+	} elsif ($in eq KEY_DOWN) {
 
-	# Process other keys
+		$self->popup;
+
+	# Hand everything else to the text widget
 	} else {
-
-		return if $ro;
-
-		# Exit if it's a non-printing character
-		return unless $in =~ /^[\w\W]$/;
-
-		# Reject if we're already at the max length
-		if (defined $max && length($value) == $max) {
-			beep;
-			return;
-
-		# Append to the end if the cursor's at the end
-		} elsif ($pos == length($value)) {
-			$value .= $in;
-
-		# Insert the character at the cursor's position
-		} elsif ($pos > 0) {
-			@string = (@string[0..($pos - 1)], $in, @string[$pos..$#string]);
-			$value = join('', @string);
-
-		# Insert the character at the beginning of the string
-		} else {
-			$value = "$in$value";
-		}
-
-		# Increment the cursor's position
-		++$pos;
+		$self->SUPER::_input($in);
 	}
-
-	# Save the changes
-	@$conf{qw(VALUE CURSORPOS)} = ($value, $pos);
 }
 
 1;
 
 =head1 HISTORY
 
-1999/12/29 -- Original text field widget in functional model
-2001/07/05 -- First incarnation in OO architecture
+2001/12/09 -- First version of the combo box
 
 =head1 AUTHOR/COPYRIGHT
 

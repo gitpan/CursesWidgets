@@ -3,7 +3,7 @@
 #
 # (c) 2001, Arthur Corliss <corliss@digitalmages.com>
 #
-# $Id: Widgets.pm,v 1.99 2001/12/05 09:52:40 corliss Exp $
+# $Id: Widgets.pm,v 1.100 2001/12/10 10:56:20 corliss Exp $
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ framework
 
 =head1 MODULE VERSION
 
-$Id: Widgets.pm,v 1.99 2001/12/05 09:52:40 corliss Exp $
+$Id: Widgets.pm,v 1.100 2001/12/10 10:56:20 corliss Exp $
 
 =head1 SYNOPSIS
 
@@ -61,13 +61,50 @@ $Id: Widgets.pm,v 1.99 2001/12/05 09:52:40 corliss Exp $
 
 =head1 REQUIREMENTS
 
-Curses
+=over
+
+=item Curses
+
+=back
 
 =head1 DESCRIPTION
 
 This module serves two purposes:  to provide a framework for creating
 custom widget classes, and importing a few useful functions for 
 global use.
+
+Widget specific methods are documented in each Widget's pod, of which the
+following widgets are currently available:
+
+=over
+
+=item Button Set (Curses::Widgets::ButtonSet)
+
+=item Calendar (Curses::Widgets::Calendar)
+
+=item Combo-Box (Curses::Widgets::ComboBox)
+
+=item List Box (Curses::Widgets::ListBox)
+
+=item Progress Bar (Curses::Widgets::ProgressBar)
+
+=item Text Field (Curses::Widgets::TextField)
+
+=item Text Memo (Curses::Widgets::TextMemo)
+
+=back
+
+The following tutorials are available:
+
+=over
+
+=item Widget Usage -- General Usage & Tips (Curses::Widgets::Tutorial)
+
+=item Widget Creation (Curses::Widgets::Tutorial::Creation)
+
+=item Widget Creation -- ComboBox Example (Curses::Widgets::Tutorial::ComboBox)
+
+=back
 
 =cut
 
@@ -81,10 +118,11 @@ package Curses::Widgets;
 
 use strict;
 use vars qw($VERSION @ISA @EXPORT);
+use Carp;
 use Curses;
 use Exporter;
 
-($VERSION) = (q$Revision: 1.99 $ =~ /(\d+(?:\.(\d+))+)/);
+($VERSION) = (q$Revision: 1.992 $ =~ /(\d+(?:\.(\d+))+)/);
 @ISA = qw( Exporter );
 @EXPORT = qw( select_colour select_color scankey textwrap );
 
@@ -148,7 +186,7 @@ sub select_colour {
 
 	# Make sure the foreground was specified at a minimum.
 	if (! defined $fore) {
-		warn "No foreground colour specified--ignoring command.\n";
+		carp "No foreground colour specified--ignoring command.\n";
 		return 0;
 	}
 
@@ -169,7 +207,7 @@ sub select_colour {
 
 		# Generate a warning if invalid colours were passed
 		} else {
-			warn "Invalid color pair passed:  $fore/$back--ignoring.\n";
+			carp "Invalid color pair passed:  $fore/$back--ignoring.\n";
 			return undef;
 		}
 	}
@@ -483,7 +521,7 @@ that exists in the configuration hash.
 
 sub getField {
 	my $self = shift;
-	my @fields = shift;
+	my @fields = @_;
 	my $conf = $self->{CONF};
 	my @results;
 
@@ -491,7 +529,7 @@ sub getField {
 		if (exists $$conf{$_}) {
 			push(@results, $$conf{$_});
 		} else {
-			warn ref($self), ":  attempting to read a non-existent field!\n";
+			carp ref($self), ":  attempting to read a non-existent field!\n";
 		}
 	}
 
@@ -518,7 +556,7 @@ sub setField {
 		if (exists $$conf{$_}) {
 			$$conf{$_} = $fields{$_};
 		} else {
-			warn ref($self), ":  attempting to set a non-existent field\n";
+			carp ref($self), ":  attempting to set a non-existent field\n";
 		}
 	}
 }

@@ -7,7 +7,7 @@ WriteMakefile(
 	'AUTHOR' => 'Arthur Corliss <corliss@digitalmages.com>',
 	'ABSTRACT' => 
 	'High level access to widgets for rapid interface design.',
-    'VERSION' => '1.99',
+    'VERSION' => '1.992',
 	'PREREQ_PM'	=> \%mods
 );
 
